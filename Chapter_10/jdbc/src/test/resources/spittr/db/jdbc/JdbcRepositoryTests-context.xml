@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <beans profile="H2">
+        <jdbc:embedded-database id="dataSource" type="H2">
+            <jdbc:script location="classpath:spittr/db/jdbc/schema.sql"/>
+            <jdbc:script location="classpath:spittr/db/jdbc/test-data.sql"/>
+        </jdbc:embedded-database>
+    </beans>
+
+    <beans profile="Mysql">
+        <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+            <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="url" value="jdbc:mysql://cdb-btmlbap0.bj.tencentcdb.com:10124/testdb?characterEncoding=UTF8"/>
+            <property name="username" value="root"/>
+            <property name="password" value=""/><!--todo-->
+        </bean>
+
+        <!--初始化数据-->
+        <jdbc:initialize-database data-source="dataSource">
+            <jdbc:script location="classpath:spittr/db/jdbc/schema_mysql.sql"/>
+            <jdbc:script location="classpath:spittr/db/jdbc/test-data_mysql.sql"/>
+        </jdbc:initialize-database>
+    </beans>
+
+    <beans>
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+              c:dataSource-ref="dataSource"/>
+
+        <bean class="spittr.db.jdbc.JdbcSpitterRepository"
+              c:jdbcTemplate-ref="jdbcTemplate"/>
+
+        <bean class="spittr.db.jdbc.JdbcSpittleRepository"
+              c:jdbcTemplate-ref="jdbcTemplate"/>
+
+        <bean id="transactionManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+              c:dataSource-ref="dataSource"/>
+    </beans>
+</beans>

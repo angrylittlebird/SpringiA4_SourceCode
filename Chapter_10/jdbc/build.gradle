@@ -1,0 +1,33 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+
+dependencies {
+	compile "org.springframework:spring-context:$springVersion"
+	compile "org.springframework:spring-jdbc:$springVersion"
+	compile "com.h2database:h2:$h2Version"
+	compile "javax.inject:javax.inject:1"
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2
+	compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.7.0'
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+
+    testCompile "junit:junit-dep:$junitVersion"
+    testCompile "org.springframework:spring-test:$springVersion"
+
+}
+
+repositories {
+	maven { url 'http://maven.springframework.org/release' }
+	maven { url 'http://maven.springframework.org/milestone' }
+	maven { url 'http://maven.springframework.org/snapshot' }
+	maven { url 'http://download.java.net/maven/2' }
+	mavenCentral()
+}
+
+task wrapper2(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+jar {
+        baseName = 'spittr'
+}
